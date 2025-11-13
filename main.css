@@ -1,65 +1,10 @@
 @font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2') format('woff2');
-    font-weight: 100;
+    font-family: 'OngleipParkDahyeon';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/Ownglyph_ParkDaHyun.woff2') format('woff2');
+    font-weight: normal;
     font-display: swap;
 }
 
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraLight.woff2') format('woff2');
-    font-weight: 200;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2') format('woff2');
-    font-weight: 300;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2') format('woff2');
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2') format('woff2');
-    font-weight: 600;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2') format('woff2');
-    font-weight: 800;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2') format('woff2');
-    font-weight: 900;
-    font-display: swap;
-}
 html, body {
     margin: 0;
     height: 100%;
@@ -75,7 +20,7 @@ body {
     overflow-y: hidden;
     align-items: center;
     height: 100vh;
-    font-family: "Pretendard";
+    font-family: "OngleipParkDahyeon";
 }
 
 .container {
@@ -97,42 +42,76 @@ body {
     z-index: -1; /* 텍스트보다 뒤에 오도록 설정 */
 }
 
+.main-text h1 {
+    position: relative; /* static → relative */
+    top: -5vh; /* 화면 높이 기준으로 위로 올림, 값 조절 가능 */
+}
+
 h1 {
-    background-image: linear-gradient(#FFD56B 0%, #ffc942 100%);
+    background-image: linear-gradient(#E2AC26 0%, rgb(241, 188, 53) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
+    top: -20px; /* 숫자를 키우면 더 위로 올라감 */
     font-weight: 900;
     text-align: center;
     line-height: 1.2;
-    font-size: 10vw; /* 화면 너비 기준 비율로 크기 조정 */
+    font-size: 16vw; /* 화면 너비 기준 비율로 크기 조정 */
     margin: 0 5vw; /* 좌우 여백 */
     text-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+.button-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* 버튼 스타일 */
 button {
-    width: 70vw;
-    height: 7vh;
-    background: linear-gradient(145deg, #9C2C2C, #7A1C1C); /* 그라디언트로 깊이감 */
-    color: #E9D8A6;
-    font-size: 25px;
-    border-radius: 12px;
-    font-family: "Pretendard", sans-serif;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* 더 부드럽고 연한 그림자 */
-    transition: all 0.3s ease;
+  width: 70vw;
+  height: 7vh;
+  background: linear-gradient(145deg, #9C2C2C, #7A1C1C);
+  color: #FFD56B;
+  border: 2px solid #FFD56B;
+  font-size: 25px;
+  border-radius: 12px;
+  font-family: "OngleipParkDahyeon", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
-/* 호버 효과: 살짝 올라오면서 그림자 진해짐 */
+/* 호버 */
 button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* 클릭 효과: 누르는 느낌 */
+/* 클릭 */
 button:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 눈 이미지 겹치기 */
+.snow-overlay {
+    position: absolute;
+    top: -30%; /* 살짝 위로 */
+    left: 57.5%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: auto;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.95;
+}
+
+.bottom-img {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 4;
 }
