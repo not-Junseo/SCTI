@@ -120,3 +120,10 @@ button:active {
     display: block;
     z-index: 4;
 }
+
+@media (max-width: 600px) {
+    h1 {
+        background-image: linear-gradient(#FFE6A3 0%, #FFD56B 100%);
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+}
