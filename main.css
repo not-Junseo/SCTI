@@ -49,18 +49,21 @@ body {
 }
 
 h1 {
-    background-image: linear-gradient(#E2AC26 0%, #E2AC26 100%);
+    color: #E2AC26;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    top: -20px; /* 숫자를 키우면 더 위로 올라감 */
     font-weight: 900;
     text-align: center;
-    line-height: 1.2;
-    font-size: 16vw; /* 화면 너비 기준 비율로 크기 조정 */
-    margin: 0 5vw; /* 좌우 여백 */
-    text-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    font-size: 16vw;
+    margin: 0 5vw;
+
+    /* 그림자 2단계로 안정화 */
+    text-shadow:
+        0 2px 3px rgba(0,0,0,0.25),
+        0 6px 12px rgba(0,0,0,0.15);
 }
+
 
 .button-container {
   position: relative;
@@ -123,7 +126,7 @@ button:active {
 
 @media (max-width: 600px) {
     h1 {
-        background-image: linear-gradient(#E2AC26 0%, #E2AC26 100%);
-        text-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        color: #E2AC26;
+        
     }
 }

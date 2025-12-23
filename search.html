@@ -1,3 +1,7 @@
+<!--Made By Goyounghee 2025. 12. 14.-->
+<!--이거 건들여서 고장나면 알아서 처리하셔야함.-->
+<!--2025 크리스마스 이벤트 for 석적중학교-->
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,20 +11,381 @@
     <link rel="stylesheet" href="search.css">
 </head>
 <body>
-    <div class="progress-bar">
-        <div class="count">1번</div>
-        <div class="count">2번</div>
-        <div class="count">3번</div>
-        <div class="count">4번</div>
-        <div class="count">5번</div>
+    <div class="guide-topbar" id="progressBar">
+        <div class="top-bar active">1번</div>
+        <div class="top-bar">2번</div>
+        <div class="top-bar">3번</div>
+        <div class="top-bar">4번</div>
+        <div class="top-bar">5번</div>
     </div>
-    <div class="container">
-        <h1>겨울방학 첫날 아침, 눈이 펑펑 와 있다!</h1>
-        <h3>나는..</h3>
-        <button>눈사람을 만들거에요!</button>
-        <button>집에서 영화볼거에요!</button>
-        <button>친구들이랑 뭐할지 정할거에요!</button>
-        <button>혼자 풍경을 볼거에요!</button>
+    
+    <div class="question">
+        <div class="question-glow"></div>
+        <div id="questionTitle" class="question-text">크리스마스에<br>하고싶은 행동은?</div>
+    </div>
+
+    <div class="selection-btn" id="selectionContainer">
+        <!-- JS가 질문별 보기 버튼을 렌더링합니다 -->
+    </div>
+
+    <div id="resultCard" class="result-card hidden">
+        <div class="result-badge" id="resultBadge">솔크TI</div>
+        <div class="result-title" id="resultTitle">결과 타이틀</div>
+        <div class="result-desc" id="resultDesc">설명</div>
+        <div class="result-actions">
+            <button class="share-btn primary" id="retryBtn">다시 검사하기</button>
+            <button class="share-btn" id="copyBtn">결과 텍스트 복사</button>
+            <button class="share-btn" id="storyBtn">인스타 스토리로 공유</button>
+        </div>
+        <div class="result-tip">TIP: 아래 버튼을 눌러 결과 이미지를 저장한 뒤 인스타 스토리에 올리세요.</div>
+        <button class="share-btn outline" id="downloadCardBtn">결과 이미지 저장</button>
     </div>
 </body>
+<script>
+// --------------------------- 퀴즈 데이터 (여기만 수정하면 질문/보기/유형 변경 가능) ---------------------------
+const quizData = {
+    questions: [
+        {
+            text: '크리스마스에 하고 싶은 행동은?',
+            options: [
+                { label: '선물 주기', type: 'GIVER' },
+                { label: '간식 먹기', type: 'FOODIE' },
+                { label: '게임하기', type: 'PLAYER' }
+            ]
+        },
+        {
+            text: '함께 보내고 싶은 사람은?',
+            options: [
+                { label: '가족', type: 'GIVER' },
+                { label: '친구', type: 'PLAYER' },
+                { label: '연인/썸', type: 'DREAMER' }
+            ]
+        },
+        {
+            text: '크리스마스 음악 취향은?',
+            options: [
+                { label: '캐럴 플레이리스트', type: 'GIVER' },
+                { label: 'Lo-fi 잔잔템', type: 'DREAMER' },
+                { label: '신나는 EDM', type: 'PLAYER' }
+            ]
+        },
+        {
+            text: '올해 가장 해보고 싶은 것은?',
+            options: [
+                { label: '직접 만든 선물 나눔', type: 'GIVER' },
+                { label: '맛집 투어', type: 'FOODIE' },
+                { label: '방구석 파티/게임', type: 'PLAYER' }
+            ]
+        },
+        {
+            text: '크리스마스의 나를 한 단어로?',
+            options: [
+                { label: '따뜻한 산타', type: 'GIVER' },
+                { label: '먹방 요정', type: 'FOODIE' },
+                { label: '루돌프 드리머', type: 'DREAMER' }
+            ]
+        }
+    ],
+    types: {
+        GIVER: {
+            title: '산타형 GIVER',
+            desc: '주변을 따뜻하게 채워주는 산타 타입! 선물과 배려로 모두를 웃게 만듭니다.',
+            color: '#E2AC26'
+        },
+        FOODIE: {
+            title: '먹방요정 FOODIE',
+            desc: '맛있는 걸 향해 달려가는 행복 전도사. 크리스마스는 곧 간식의 날!',
+            color: '#F27575'
+        },
+        PLAYER: {
+            title: '파티러 PLAYER',
+            desc: '게임과 파티로 에너지를 터뜨리는 흥 폭발 유형. 다같이 놀 준비 완료!',
+            color: '#6BD9A8'
+        },
+        DREAMER: {
+            title: '드리머 DREAMER',
+            desc: '감성 한 스푼, 로맨스 한 스푼. 잔잔한 무드로 크리스마스를 즐겨요.',
+            color: '#8AB2FF'
+        }
+    }
+};
+
+// --------------------------- 상태 및 DOM ---------------------------
+let currentStep = 0;
+const scores = {};
+const questionTitleEl = document.getElementById('questionTitle');
+const selectionContainerEl = document.getElementById('selectionContainer');
+const progressBarEls = document.querySelectorAll('#progressBar .top-bar');
+
+const resultCardEl = document.getElementById('resultCard');
+const resultBadgeEl = document.getElementById('resultBadge');
+const resultTitleEl = document.getElementById('resultTitle');
+const resultDescEl = document.getElementById('resultDesc');
+const retryBtn = document.getElementById('retryBtn');
+const copyBtn = document.getElementById('copyBtn');
+const storyBtn = document.getElementById('storyBtn');
+const downloadCardBtn = document.getElementById('downloadCardBtn');
+
+// --------------------------- 렌더링 ---------------------------
+function renderQuestion() {
+    const question = quizData.questions[currentStep];
+    questionTitleEl.innerHTML = question.text.replace(/\n/g, '<br>');
+    selectionContainerEl.innerHTML = '';
+
+    question.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'selection';
+        btn.type = 'button';
+        btn.innerHTML = `<span class="selection-text">${idx + 1}. ${opt.label}</span>`;
+        btn.addEventListener('click', () => handleSelect(opt.type));
+        selectionContainerEl.appendChild(btn);
+    });
+
+    updateProgress();
+    toggleViews('quiz');
+}
+
+function updateProgress() {
+    progressBarEls.forEach((el, idx) => {
+        el.classList.remove('active', 'done');
+        if (idx < currentStep) el.classList.add('done');
+        if (idx === currentStep) el.classList.add('active');
+    });
+}
+
+function toggleViews(view) {
+    const isResult = view === 'result';
+    resultCardEl.classList.toggle('hidden', !isResult);
+    selectionContainerEl.classList.toggle('hidden', isResult);
+    questionTitleEl.classList.toggle('hidden', isResult);
+    document.querySelector('.question-glow').classList.toggle('hidden', isResult);
+}
+
+// --------------------------- 로직 ---------------------------
+function handleSelect(type) {
+    scores[type] = (scores[type] || 0) + 1;
+    const isLast = currentStep === quizData.questions.length - 1;
+    if (isLast) {
+        showResult();
+        return;
+    }
+    currentStep += 1;
+    renderQuestion();
+}
+
+function getResultType() {
+    let best = null;
+    Object.entries(scores).forEach(([key, val]) => {
+        if (!best || val > best.score) best = { key, score: val };
+    });
+    // 모든 문항이 다른 타입이라면 첫 번째 옵션 타입을 기본으로
+    return best ? best.key : quizData.questions[0].options[0].type;
+}
+
+function showResult() {
+    const typeKey = getResultType();
+    const typeData = quizData.types[typeKey] || quizData.types[quizData.questions[0].options[0].type];
+
+    resultBadgeEl.textContent = '솔크TI 결과';
+    resultTitleEl.textContent = typeData.title;
+    resultDescEl.textContent = typeData.desc;
+    resultCardEl.style.setProperty('--result-color', typeData.color || '#FFD56B');
+    toggleViews('result');
+    progressBarEls.forEach(el => el.classList.add('done'));
+}
+
+function resetQuiz() {
+    currentStep = 0;
+    Object.keys(scores).forEach(k => delete scores[k]);
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// --------------------------- 공유/다운로드 ---------------------------
+function buildShareText() {
+    const typeKey = getResultType();
+    const typeData = quizData.types[typeKey];
+    return `솔크TI | ${typeData.title}\n${typeData.desc}\n\n나의 크리스마스 유형을 알아보세요!`;
+}
+
+async function copyResult() {
+    try {
+        await navigator.clipboard.writeText(buildShareText());
+        alert('결과 텍스트가 복사되었습니다. 인스타 스토리에 붙여넣기 해보세요!');
+    } catch (e) {
+        alert('복사에 실패했습니다. 브라우저 권한을 확인해주세요.');
+    }
+}
+
+function openStory() {
+    // 인스타 스토리 편집창 (모바일/로그인 환경에서 동작). 백업용으로 새 탭을 엽니다.
+    window.open('https://www.instagram.com/stories/create/', '_blank');
+}
+
+function createResultCanvas() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    const typeKey = getResultType();
+    const typeData = quizData.types[typeKey];
+    const bg = '#0B3D2E';
+
+    // 배경
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 카드
+    ctx.fillStyle = '#142B22';
+    ctx.roundRect(90, 320, 900, 1100, 30);
+    ctx.fill();
+
+    // 제목
+    ctx.fillStyle = typeData.color || '#FFD56B';
+    ctx.font = 'bold 72px Pretendard, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('솔크TI 결과', canvas.width / 2, 500);
+
+    // 타입
+    ctx.fillStyle = '#FFD56B';
+    ctx.font = 'bold 80px Pretendard, sans-serif';
+    ctx.fillText(typeData.title, canvas.width / 2, 640);
+
+    // 설명
+    ctx.fillStyle = '#F5F5F5';
+    ctx.font = '36px Pretendard, sans-serif';
+    wrapText(ctx, typeData.desc, canvas.width / 2, 760, 760, 52);
+
+    // 하단 문구
+    ctx.font = '32px Pretendard, sans-serif';
+    ctx.fillStyle = '#CFE9D8';
+    wrapText(ctx, '나의 크리스마스 유형을 알아보고 스토리에 공유해보세요!', canvas.width / 2, 1250, 760, 48);
+
+    return canvas;
+}
+
+function downloadCard() {
+    const canvas = createResultCanvas();
+    const link = document.createElement('a');
+    link.download = 'solkti-result.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+async function shareStoryImage() {
+    const canvas = createResultCanvas();
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) {
+        downloadCard();
+        openStory();
+        return;
+    }
+
+    const file = new File([blob], 'solkti-result.png', { type: 'image/png' });
+
+    // Web Share Level 2 지원 시 바로 공유 시도 (모바일 크롬/사파리 일부)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({
+                files: [file],
+                title: '솔크TI 결과',
+                text: buildShareText()
+            });
+            return;
+        } catch (e) {
+            // 유저 취소 등은 무시하고 폴백
+        }
+    }
+
+    // 폴백: 이미지 다운로드 후 인스타 스토리 편집창 열기
+    const link = document.createElement('a');
+    link.download = 'solkti-result.png';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    openStory();
+    alert('이미지를 저장한 뒤 인스타 스토리에서 불러오세요.');
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    const lines = [];
+    words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > maxWidth && line !== '') {
+            lines.push(line);
+            line = word + ' ';
+        } else {
+            line = test;
+        }
+    });
+    lines.push(line);
+    lines.forEach((l, i) => ctx.fillText(l.trim(), x, y + i * lineHeight));
+}
+
+// --------------------------- 이벤트 바인딩 ---------------------------
+retryBtn.addEventListener('click', resetQuiz);
+copyBtn.addEventListener('click', copyResult);
+storyBtn.addEventListener('click', shareStoryImage);
+downloadCardBtn.addEventListener('click', downloadCard);
+
+// 캔버스에서 둥근 사각형을 위한 helper
+CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    this.beginPath();
+    this.moveTo(x + radius, y);
+    this.lineTo(x + w - radius, y);
+    this.quadraticCurveTo(x + w, y, x + w, y + radius);
+    this.lineTo(x + w, y + h - radius);
+    this.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    this.lineTo(x + radius, y + h);
+    this.quadraticCurveTo(x, y + h, x, y + h - radius);
+    this.lineTo(x, y + radius);
+    this.quadraticCurveTo(x, y, x + radius, y);
+    this.closePath();
+};
+
+// 초기 렌더
+renderQuestion();
+</script>
+<script>
+const snowCount = 100;
+const snowflakes = [];
+
+for (let i = 0; i < snowCount; i++) {
+    const snow = document.createElement('div');
+    snow.className = 'snowflake';
+
+    const size = Math.random() * 4 + 2;
+    snow.style.width = size + 'px';
+    snow.style.height = size + 'px';
+    snow.style.left = Math.random() * window.innerWidth + 'px';
+    snow.style.top = Math.random() * window.innerHeight + 'px';
+    snow.speed = Math.random() * 1 + 0.5; // 눈송이 속도
+
+    // 눈송이가 스크롤 영향을 안 받게 position을 fixed로 변경
+    snow.style.position = 'fixed';
+
+    document.body.appendChild(snow);
+    snowflakes.push(snow);
+}
+
+function animateSnow() {
+    snowflakes.forEach(snow => {
+        let top = parseFloat(snow.style.top);
+        top += snow.speed;
+
+        if (top >= window.innerHeight - 1) {
+            top = -10; // 화면 위로 다시 보냄
+            snow.style.left = Math.random() * window.innerWidth + 'px';
+        }
+
+        snow.style.top = top + 'px';
+    });
+    requestAnimationFrame(animateSnow);
+}
+
+animateSnow();
+</script>
 </html>
