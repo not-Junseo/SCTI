@@ -15,6 +15,7 @@ body {
     margin: 0;
     justify-content: center;
     position: relative;
+    font-family: 'Ownglyph PDH', sans-serif;
     overflow-y: auto;
     align-items: center;
     min-height: 100vh;
@@ -49,7 +50,7 @@ body {
     line-height: 25px;
     color: #FFD56B; 
     font-size: 20px; 
-    font-family: 'Ownglyph PDH'; 
+    font-family: 'Ownglyph PDH', sans-serif;
     font-weight: 400; 
     word-wrap: break-word;
     transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -93,7 +94,7 @@ body {
     position: relative;
     color: #E2AC26;
     font-size: 40px;
-    font-family: Ownglyph PDH;
+    font-family: 'Ownglyph PDH', sans-serif;
     font-weight: 400;
     word-wrap: break-word;
     width: 100%;
@@ -126,7 +127,7 @@ body {
     text-align: center; 
     color: #FFD56B; 
     font-size: 38px; 
-    font-family: Ownglyph PDH; 
+    font-family: 'Ownglyph PDH', sans-serif;
     font-weight: 400; 
     word-wrap: break-word;
     pointer-events: none;
@@ -185,7 +186,7 @@ body {
 
 .result-title {
     font-size: 34px;
-    font-family: Ownglyph PDH;
+    font-family: 'Ownglyph PDH', sans-serif;
     color: var(--result-color, #FFD56B);
 }
 
